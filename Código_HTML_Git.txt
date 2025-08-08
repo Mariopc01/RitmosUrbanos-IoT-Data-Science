@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Ritmos Urbanos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+        }
+        h1 {
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .card {
+            background-color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .card-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #2b6cb0;
+            margin: 10px 0;
+        }
+        .card-label {
+            font-size: 0.9em;
+            color: #718096;
+        }
+        #last-update {
+            margin-top: 20px;
+            font-size: 0.8em;
+            color: #a0aec0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dashboard de Monitoramento</h1>
+        <p>Dados em tempo real de Mesquita, RJ.</p>
+        
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-label">Luminosidade (lux)</div>
+                <div id="luminosidade" class="card-value">--</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Temperatura (°C)</div>
+                <div id="temperatura" class="card-value">--</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Umidade (%)</div>
+                <div id="umidade" class="card-value">--</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Nível de Ruído</div>
+                <div id="nivel_ruido" class="card-value">--</div>
+            </div>
+            <div class="card" style="grid-column: span 2;">
+                <div class="card-label">Último Movimento</div>
+                <div id="direcao_movimento" class="card-value">--</div>
+            </div>
+        </div>
+        <p id="last-update">Última atualização: --</p>
+    </div>
+
+    <script>
+        // Função para buscar os dados mais recentes da API
+        async function fetchLatestData() {
+            try {
+                // Faremos uma chamada GET para um novo endpoint da nossa API
+                const response = await fetch('/latest'); 
+                const data = await response.json();
+                
+                // Atualiza os elementos HTML com os dados
+                document.getElementById('luminosidade').textContent = data.luminosidade ? data.luminosidade.toFixed(2) : '--';
+                document.getElementById('temperatura').textContent = data.temperatura ? data.temperatura.toFixed(2) : '--';
+                document.getElementById('umidade').textContent = data.umidade ? data.umidade.toFixed(2) : '--';
+                document.getElementById('nivel_ruido').textContent = data.nivel_ruido ? data.nivel_ruido : '--';
+                document.getElementById('direcao_movimento').textContent = data.direcao_movimento || '--';
+                
+                // Atualiza o horário da última atualização
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('pt-BR');
+                document.getElementById('last-update').textContent = `Última atualização: ${timeString}`;
+                
+            } catch (error) {
+                console.error('Erro ao buscar dados:', error);
+                document.getElementById('last-update').textContent = 'Erro ao buscar dados!';
+            }
+        }
+
+        // Busca os dados imediatamente
+        fetchLatestData();
+        
+        // Configura para buscar dados a cada 5 segundos
+        setInterval(fetchLatestData, 5000); 
+    </script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+#include <Wire.h>
+#include <BH1750.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BME280.h>
+#include <WiFi.h> // Biblioteca para gerenciar o Wi-Fi
+
+BH1750 lightMeter;
+Adafruit_BME280 bme; 
+
+const char* ssid = "SEU_WIFI_SSID"; // Substitua pelo nome da sua rede Wi-Fi
+const char* password = "SUA_SENHA_WIFI"; // Substitua pela sua senha
+
+const int micPin = 34;
+const int pirAPin = 14;
+const int pirBPin = 12;
+
+unsigned long pirA_lastTrigger = 0;
+unsigned long pirB_lastTrigger = 0;
+const int debounceDelay = 200;
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(pirAPin, INPUT); 
+  pinMode(pirBPin, INPUT);
+  Wire.begin(); 
+
+  // Inicializa o Wi-Fi
+  WiFi.begin(ssid, password);
+  Serial.print("Conectando-se ao Wi-Fi...");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.print(".");
+  }
+  Serial.println("\nWi-Fi conectado!");
+  Serial.print("Endereco IP: ");
+  Serial.println(WiFi.localIP());
+
+  // Inicializa os sensores (o codigo e o mesmo que ja usamos)
+  if (lightMeter.begin(BH1750::CONTINUOUS_HIGH_RES_MODE)) {
+    Serial.println("Sensor BH1750 inicializado com sucesso.");
+  } else {
+    Serial.println("Erro ao inicializar o BH1750.");
+  }
+  
+  if (bme.begin(0x76)) { 
+    Serial.println("Sensor BME280 inicializado com sucesso.");
+  } else {
+    Serial.println("Erro ao inicializar o BME280.");
+  }
+  
+  Serial.println("Todos os sensores e Wi-Fi inicializados.");
+}
+
+void loop() {
+  // O loop continua com as leituras dos sensores
+  // Leitura do BH1750
+  float lux = lightMeter.readLightLevel(); 
+  if (lux > 0) {
+    Serial.print("Luminosidade: ");
+    Serial.print(lux);
+    Serial.println(" lux");
+  } else {
+    Serial.println("Leitura de luminosidade invalida.");
+  }
+  
+  // Leitura do BME280
+  Serial.print("Temperatura: ");
+  Serial.print(bme.readTemperature());
+  Serial.println(" *C");
+  
+  Serial.print("Umidade: ");
+  Serial.print(bme.readHumidity());
+  Serial.println(" %");
+  
+  Serial.print("Pressao: ");
+  Serial.print(bme.readPressure() / 100.0F); 
+  Serial.println(" hPa");
+  
+  // Leitura do Microfone
+  int micValue = analogRead(micPin);
+  Serial.print("Nivel de Ruido: ");
+  Serial.println(micValue);
+
+  // Leitura e Logica de Direcao dos PIRs
+  int pirAState = digitalRead(pirAPin);
+  int pirBState = digitalRead(pirBPin);
+
+  if (pirAState == HIGH && millis() > pirA_lastTrigger + debounceDelay) {
+    pirA_lastTrigger = millis();
+    if (pirA_lastTrigger > pirB_lastTrigger) {
+      Serial.println(">>> Movimento da Direcao A para B!");
+    }
+  }
+
+  if (pirBState == HIGH && millis() > pirB_lastTrigger + debounceDelay) {
+    pirB_lastTrigger = millis();
+    if (pirB_lastTrigger > pirA_lastTrigger) {
+      Serial.println("<<< Movimento da Direcao B para A!");
+    }
+  }
+
+  Serial.println("---");
+  
+  delay(2000); // Aguarda 2 segundos antes da proxima leitura
+}

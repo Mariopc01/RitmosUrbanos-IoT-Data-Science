@@ -1,0 +1,103 @@
+from flask import Flask, request, render_template, jsonify
+import psycopg2
+import os
+
+app = Flask(__name__)
+
+# Configuracoes do Banco de Dados
+DB_HOST = "localhost" # Use localhost para conexao interna
+DB_NAME = "XXXXXXXX"
+DB_USER = "XXXXXX"
+DB_PASS = "sua_senha_forte" # Substitua pela sua senha
+
+@app.route('/')
+def dashboard():
+    return render_template('index.html')
+
+@app.route('/latest', methods=['GET'])
+def get_latest_data():
+    try:
+        conn = psycopg2.connect(
+            host=DB_HOST,
+            dbname=DB_NAME,
+            user=DB_USER,
+            password=DB_PASS
+        )
+        cur = conn.cursor()
+        
+        # Consulta para obter a ultima linha de dados
+        sql_query = """
+            SELECT
+                luminosidade,
+                temperatura,
+                umidade,
+                pressao,
+                nivel_ruido,
+                direcao_movimento
+            FROM dados_sensores
+            ORDER BY timestamp DESC
+            LIMIT 1;
+        """
+        
+        cur.execute(sql_query)
+        data = cur.fetchone()
+        
+        cur.close()
+        conn.close()
+
+        if data:
+            # Converte a tupla em um dicionario para jsonify
+            data_dict = {
+                'luminosidade': data[0],
+                'temperatura': data[1],
+                'umidade': data[2],
+                'pressao': data[3],
+                'nivel_ruido': data[4],
+                'direcao_movimento': data[5]
+            }
+            return jsonify(data_dict)
+        else:
+            return jsonify({}), 204 # Retorna vazio se nao houver dados
+            
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/data', methods=['POST'])
+def receive_data():
+    if request.method == 'POST':
+        try:
+            data = request.json
+            
+            conn = psycopg2.connect(
+                host=DB_HOST,
+                dbname=DB_NAME,
+                user=DB_USER,
+                password=DB_PASS
+            )
+            cur = conn.cursor()
+            
+            sql_query = """
+                INSERT INTO dados_sensores (timestamp, luminosidade, temperatura, umidade, pressao, nivel_ruido, direcao_movimento)
+                VALUES (NOW(), %s, %s, %s, %s, %s, %s);
+            """
+            
+            cur.execute(sql_query, (
+                data.get('Luminosidade'),
+                data.get('Temperatura'),
+                data.get('Umidade'),
+                data.get('Pressao'),
+                data.get('NivelRuido'),
+                data.get('DirecaoMovimento')
+            ))
+            
+            conn.commit()
+            cur.close()
+            conn.close()
+            
+            return "Dados recebidos e salvos com sucesso!", 200
+        except Exception as e:
+            return f"Erro ao processar a requisicao: {str(e)}", 500
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
