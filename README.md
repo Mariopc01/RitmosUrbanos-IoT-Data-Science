@@ -2,7 +2,9 @@
 Projeto com um Microcontrolador ESP32 coletando dados da rua como luminosidade, temperatura, prressão atmosférica, umidade, movvimento e som, para poder cruzar essas informações da via urbana.
 
 Desenvolvimento do projeto Ritmos Urbanos
+
 Relatório do "Dia 1" 05/08/2025:
+
 •	Validação da Ideia: Comecei com a ideia de usar os dois sensores de movimento PIR para detectar a direção do tráfego de pedestres.
 •	Integração e Código do ESP32: Testado com sucesso todos os sensores:
    o	BH1750 (Luminosidade): Testada a leitura inicial.
@@ -14,7 +16,8 @@ Relatório do "Dia 1" 05/08/2025:
 •	Backend e Armazenamento (Etapa 1): Foi criada uma API com o Google Apps Script e uma planilha no Google Sheets para receber os dados, validando o sistema de ponta a ponta.
 •	Análise sobre Bancos de Dados: Pesquisada a importância de usar um banco de dados de verdade, como o PostgreSQL com a extensão TimescaleDB, em vez da planilha, e tomei a decisão estratégica de usar a nuvem para hospedar o servidor, o que tornará o portfólio muito mais robusto e profissional.
 
-Relatório do “Dia 2” 07/08/2025
+Relatório do “Dia 2” 07/08/2025: 
+
 1. Configuração da Infraestrutura na Nuvem (Google Cloud Platform - GCP)
    •	Criação da Máquina Virtual (VM): Iniciado o projeto com a criação de uma instância de máquina virtual na GCP.
    •	Configuração de Rede: Configuradas as regras de firewall para permitir o tráfego de entrada nas portas 80 (HTTP), 443 (HTTPS) e, mais importante, na porta 5000 para a API, garantindo que o ESP32 pudesse se comunicar com o servidor.
@@ -39,7 +42,7 @@ Relatório do “Dia 2” 07/08/2025
 Este relatório completo demonstra que o projeto está funcionando perfeitamente, com uma arquitetura de ponta a ponta robusta e bem configurada, desde o hardware até o banco de dados na nuvem.
 Montagem do ESP32 na garagem. Os sensores de movimento e som, foram colocados no muro externo para captar a passagem das pessoas e os sons da rua. O sensor de luminosidade está na garagem perto da telha apontado para a rua de forma que capte a luminosidade. O sensor de temperatura, umidade e pressão está posicionado perto do telhado de forma a coletar esses dados.
 
-Relatório do “Dia 3” 08/08/2025
+Relatório do “Dia 3” 08/08/2025:
 
 Transformado o projeto de um sistema de coleta de dados em uma plataforma completa de visualização.
 Dashboard Web
