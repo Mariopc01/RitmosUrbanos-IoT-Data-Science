@@ -1,5 +1,5 @@
 # RitmosUrbanos-IoT-Data-Science
-Projeto com um Microcontrolador ESP32 coletando dados da rua como luminosidade, temperatura, prressão atmosférica, umidade, movvimento e som, para poder cruzar essas informações da via urbana.
+Projeto com um Microcontrolador ESP32 coletando dados da rua como luminosidade, temperatura, prressão atmosférica, umidade, movvimento e som, para poder cruzar essas informações da via urbana. Para Data Science
 
 Desenvolvimento do projeto Ritmos Urbanos
 
