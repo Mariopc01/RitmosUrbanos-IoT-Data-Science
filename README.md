@@ -15,7 +15,7 @@ Relatório do "Dia 1" 05/08/2025:
    
 •	Resolução de Problemas: Solucionado um erro de upload ao identificar que a fonte de alimentação do ESP32 estava sobrecarregada pois estava utilizando a porta USB-c para alimentar todo o projeto. A solução de usar uma fonte externa foi perfeita resolvendo o problema.
 
-•	Conexão com a Nuvem: Configurado o ESP32 para se conectar à sua rede Wi-Fi.
+•	Conexão com a Nuvem: Configurado o ESP32 para se conectar à rede Wi-Fi.
 
 •	Backend e Armazenamento (Etapa 1): Foi criada uma API com o Google Apps Script e uma planilha no Google Sheets para receber os dados, validando o sistema de ponta a ponta.
 
@@ -29,7 +29,7 @@ Relatório do “Dia 2” 07/08/2025:
    •	Sistema Operacional: A VM foi provisionada com o sistema operacional Ubuntu 24.04 LTS, uma base robusta para o servidor.
 
 2. Configuração do Banco de Dados PostgreSQL e TimescaleDB
-   •	Instalação do PostgreSQL: No terminal do servidor, instalamos o banco de dados PostgreSQL.
+   •	Instalação do PostgreSQL: No terminal do servidor, foi instalado o banco de dados PostgreSQL.
    •	Criação do Banco de Dados: Criado o banco de dados chamado monitoramento_iot e um usuário específico (iot_user) com uma senha para a API se conectar.
    •	TimescaleDB: Adicionamos o plugin TimescaleDB para otimizar o banco de dados para séries temporais, o que é ideal para dados de sensores.
    •	Criação da Tabela: Criada a tabela dados_sensores com colunas para timestamp e os dados de todos os seus sensores.
